@@ -16,5 +16,7 @@ class CompleteTaskController extends Controller
     {
         $task->is_completed = $request->is_completed;
         $task->save();
+
+        return $task->toResource();
     }
 }

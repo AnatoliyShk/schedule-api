@@ -31,6 +31,12 @@ class TaskController extends Controller
         $task->update($request->validated());
         return $task->toResource();
     }
+
+    public function destroy(Task $task)
+    {
+        $task->delete();
+        return response()->noContent();
+    }
 }
 
 
