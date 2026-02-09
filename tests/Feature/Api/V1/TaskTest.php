@@ -12,7 +12,7 @@ class TaskTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public function test_user_can_get_list_of_task(): void
+    public function test_guest_can_get_list_of_task(): void
     {
         $tasks = \App\Models\Task::factory()->count(2)->create();
 
@@ -31,7 +31,7 @@ class TaskTest extends TestCase
         ]);
     }
 
-    public function test_user_can_get_single_task(): void
+    public function test_guest_can_get_single_task(): void
     {
         $task = \App\Models\Task::factory()->create();
 
@@ -54,7 +54,7 @@ class TaskTest extends TestCase
         ]);
     }
 
-    public function test_user_can_create_task(): void
+    public function test_guest_can_create_task(): void
     {
         $taskData = [
             'name' => 'New Task',
@@ -76,7 +76,7 @@ class TaskTest extends TestCase
         ]);
     }
 
-    public function test_user_cannot_create_invalid_task(): void
+    public function test_guest_cannot_create_invalid_task(): void
     {
         $taskData = [
             'name' => '',
@@ -88,7 +88,7 @@ class TaskTest extends TestCase
         $response->assertJsonValidationErrors(['name']);
     }
 
-    public function test_user_can_update_task(): void
+    public function test_guest_can_update_task(): void
     {
         $task = \App\Models\Task::factory()->create();
 
@@ -108,7 +108,7 @@ class TaskTest extends TestCase
         ]);
     }
 
-    public function test_user_cannot_update_invalid_task(): void
+    public function test_guest_cannot_update_invalid_task(): void
     {
         $task = \App\Models\Task::factory()->create();
 
@@ -122,7 +122,7 @@ class TaskTest extends TestCase
         $response->assertJsonValidationErrors(['name']);
     }
 
-    public function test_user_can_toggle_task_completion(): void
+    public function test_guest_can_toggle_task_completion(): void
     {
         $task = \App\Models\Task::factory()->create([
             'is_completed' => false,
@@ -138,7 +138,7 @@ class TaskTest extends TestCase
         ]);
     }
 
-    public function test_user_can_delete_task(): void
+    public function test_guest_can_delete_task(): void
     {
         $task = \App\Models\Task::factory()->create();
 

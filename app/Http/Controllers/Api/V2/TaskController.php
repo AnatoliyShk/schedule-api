@@ -12,7 +12,7 @@ class TaskController extends Controller
 {
     public function index()
     {
-        return request()->user()->tasks()->toResourceCollection();
+        return request()->user()->tasks()->get()->toResourceCollection();
     }
 
     public function show(Task $task)
@@ -22,7 +22,7 @@ class TaskController extends Controller
 
     public function store(StoreTaskRequest $request)
     {
-        $task = Task::create($request->validated());
+        $task = $request->user()->tasks()->create($request->validated());
         return $task->toResource();
     }
 
