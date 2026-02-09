@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\V1;
+namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTaskRequest;
@@ -12,7 +12,7 @@ class TaskController extends Controller
 {
     public function index()
     {
-        return TaskResource::collection(Task::all());
+        return request()->user()->tasks()->toResourceCollection();
     }
 
     public function show(Task $task)
