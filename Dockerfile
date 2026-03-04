@@ -27,4 +27,6 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
     /etc/apache2/sites-available/*.conf
 RUN a2enmod rewrite
 
+RUN a2dismod mpm_event mpm_worker && a2enmod mpm_prefork
+
 EXPOSE 80
