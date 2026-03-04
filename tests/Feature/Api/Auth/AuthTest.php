@@ -9,6 +9,8 @@ use Tests\TestCase;
 
 class AuthTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_user_can_login_and_receive_token(): void
     {
         $user = User::factory()->create();
@@ -19,10 +21,7 @@ class AuthTest extends TestCase
         ]);
 
         $response->assertOk();
-        $response->assertJsonStructure([
-            'token',
-            'user'
-        ]);
+        $response->assertJsonStructure(['token', 'user']);
     }
 
     public function test_user_cannot_login_with_incorrect_credentials(): void
@@ -31,27 +30,26 @@ class AuthTest extends TestCase
 
         $response = $this->postJson('/api/auth/login', [
             'email' => $user->email,
-            'password' => 'wrong-password',
+            'password' => 'wrong-passwrod',
         ]);
 
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors('email');
+        $response->assertJsonValidationErrors(['email']);
     }
 
     public function test_user_can_register_and_receive_token(): void
     {
-        $response = $this->postJson('/api/auth/register', [
-            'name' => 'Test User',
-            'email' => $email = 'test@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
-        ]);
+        $payload = [
+            'name' => 'New user',
+            'email' => $email = 'newuser@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123'
+        ];
+
+        $response = $this->postJson('/api/auth/register', $payload);
 
         $response->assertCreated();
-        $response->assertJsonStructure([
-            'token',
-            'user'
-        ]);
+        $response->assertJsonStructure(['token', 'user']);
         $this->assertDatabaseHas('users', [
             'email' => $email
         ]);
@@ -61,9 +59,9 @@ class AuthTest extends TestCase
     {
         $payload = [
             'name' => '',
-            'email' => 'wrong-email',
-            'password' => 'shrt',
-            'password_confirmation' => 'password',
+            'email' => $email = 'wrong-email',
+            'password' => 'short',
+            'password_confirmation' => 'password123'
         ];
 
         $response = $this->postJson('/api/auth/register', $payload);
@@ -72,35 +70,38 @@ class AuthTest extends TestCase
         $response->assertJsonValidationErrors(['name', 'email', 'password']);
     }
 
-    public function test_authenticated_user_can_logout_and_token_is_revoked(): void
+    public function test_user_can_logout_and_token_is_revoked(): void
     {
         $user = User::factory()->create();
+
         $token = $user->createToken('laravel_api_token')->plainTextToken;
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-                         ->postJson('/api/auth/logout');
+            ->postJson('/api/auth/logout');
 
         $response->assertNoContent();
 
         $this->app['auth']->forgetGuards();
 
-        $protectedResponse = $this->withHeader('Authorization', 'Bearer ' . $token)
-                                  ->getJson('/api/user');
+        $protected = $this->withHeader('Authorization', 'Bearer ' . $token)
+            ->getJson('/api/user');
 
-        $protectedResponse->assertStatus(401);
+        $protected->assertStatus(401);
     }
 
-    public function test_guest_cannot_access_user_endpoint(): void
+    public function test_guest_cannot_access_user_endpoint()
     {
         $response = $this->getJson('/api/user');
 
         $response->assertStatus(401);
     }
 
-    public function test_authenticated_user_can_access_user_endpoint(): void
+    public function test_authenticated_user_can_access_user_endpoint()
     {
         $user = User::factory()->create();
+
         $this->actingAs($user);
+
         $response = $this->getJson('/api/user');
         $response->assertStatus(200);
         $response->assertJson([
