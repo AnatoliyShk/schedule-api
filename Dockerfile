@@ -48,5 +48,13 @@ RUN echo 'server { \n\
 
 EXPOSE 8080
 
-# Replace __PORT__ placeholder at runtime with actual $PORT
-CMD bash -c "sed -i \"s/__PORT__/${PORT:-8080}/g\" /etc/nginx/conf.d/laravel.conf && php-fpm -D && nginx -g 'daemon off;'"
+CMD bash -c "\
+    echo '=== STARTING ===' && \
+    sed -i \"s/__PORT__/${PORT:-8080}/g\" /etc/nginx/conf.d/laravel.conf && \
+    echo '=== NGINX CONFIG ===' && \
+    cat /etc/nginx/conf.d/laravel.conf && \
+    echo '=== STARTING PHP-FPM ===' && \
+    php-fpm -D && \
+    sleep 2 && \
+    echo '=== STARTING NGINX ===' && \
+    nginx -g 'daemon off;'"
