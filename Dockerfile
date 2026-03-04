@@ -1,9 +1,9 @@
 FROM php:8.2-apache
 
-# Install dependencies
+# Install dependencies (added libpq-dev for pgsql)
 RUN apt-get update && apt-get install -y \
     git curl zip unzip libpng-dev libonig-dev \
-    libxml2-dev libzip-dev && \
+    libxml2-dev libzip-dev libpq-dev && \
     docker-php-ext-install pdo pdo_pgsql pgsql mbstring zip exif pcntl
 
 # Install Composer
@@ -25,8 +25,8 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
     /etc/apache2/sites-available/*.conf
-RUN a2enmod rewrite
 
+# Force disable ALL mpm modules then enable only prefork
 RUN a2dismod mpm_event mpm_worker mpm_prefork ; \
     a2enmod mpm_prefork && \
     a2enmod rewrite
