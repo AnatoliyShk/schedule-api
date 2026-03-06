@@ -9,16 +9,19 @@ use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
-    /**
-     * Handle the incoming request.
-     */
     public function __invoke(LoginRequest $request)
     {
-        if(!Auth::attempt($request->only('email', 'password'))){
-            throw  ValidationException::withMessages([
+        if (!Auth::attempt($request->only('email', 'password'))) {
+            throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
-        };
-        $request->session()->regenerate();
+        }
+
+        $token = $request->user()->createToken('auth-token')->plainTextToken;
+
+        return response()->json([
+            'token' => $token,
+            'user'  => $request->user(),
+        ]);
     }
 }
