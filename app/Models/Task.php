@@ -28,16 +28,17 @@ class Task extends Model
     }
 
     public function scopeHandleSort(Builder $query, string $column)
-{
-    $query
-        ->when($column === 'name', function ($query) {
-            $query->orderBy('name');
-        })
-        ->when($column === 'time', function ($query) {
-            $query->latest();
-        })
-        ->when($column === 'priority', function ($query) {
-            $query->orderByRaw('CASE WHEN priority_id IS NULL THEN 1 ELSE 0 END, priority_id ASC');
-        });
-}
+    {
+        $query
+            ->when($column === 'name', function ($query) {
+                $query->orderBy('name');
+            })
+            ->when($column === 'time', function ($query) {
+                $query->latest();
+            })
+            ->when($column === 'priority', function ($query) {
+                $query->orderByRaw('CASE WHEN priority_id IS NULL THEN 1 ELSE 0 END,
+        priority_id ASC');
+            });
+    }
 }
