@@ -21,11 +21,14 @@ class DatabaseSeeder extends Seeder
                 foreach ($period as $date) {
                     $date->hour(rand(0, 23))->minute(rand(0, 6) * 10);
 
-                    Task::factory()->create([
-                        'user_id' => $user->id,
-                        'created_at' => $date,
-                        'updated_at' => $date
-                    ]);
+                    Task::factory()
+                        ->withRandomPriority()
+                        ->withRandomDueDate()
+                        ->create([
+                            'user_id' => $user->id,
+                            'created_at' => $date,
+                            'updated_at' => $date
+                        ]);
                 }
             });
     }
