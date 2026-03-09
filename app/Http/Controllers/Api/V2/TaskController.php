@@ -15,9 +15,10 @@ class TaskController extends Controller
     public function index()
     {
         Gate::authorize('viewAny', Task::class);
-         return request()->user()
+        return request()->user()
             ->tasks()
             ->handleSort(request()->query('sort_by') ?? 'time')
+            ->handleFilter(request()->query('due_date'))
             ->with('priority')
             ->get()
             ->toResourceCollection();
