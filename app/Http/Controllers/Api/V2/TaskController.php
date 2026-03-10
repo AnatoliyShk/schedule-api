@@ -7,7 +7,7 @@ use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
 use Illuminate\Support\Facades\Gate;
-use App\Parsers\TaskInputParser;
+use App\Services\TaskInputParser;
 
 class TaskController extends Controller
 {
